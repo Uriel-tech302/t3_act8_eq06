@@ -4,11 +4,13 @@ import Swal from 'sweetalert2';
 export const Navbar = () => {
   const navigate = useNavigate();
   
-  // Usuario simulado (Tu compañera lo conectará después)
+  // Leer los datos del usuario desde el localStorage. Si no hay, pone valores por defecto.
+  const storedUser = JSON.parse(localStorage.getItem('user')) || {};
+  
   const user = { 
-    username: 'Usuario de Prueba', 
+    username: storedUser.firstName ? `${storedUser.firstName} ${storedUser.lastName}` : 'Usuario Invitado', 
     role: 'Administrador',
-    image: 'https://dummyjson.com/icon/emilys/128' 
+    image: storedUser.image || 'https://dummyjson.com/icon/default/128' 
   };
 
   const handleLogout = () => {
@@ -23,11 +25,14 @@ export const Navbar = () => {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
+        // Borrar los datos de sesión
+        localStorage.removeItem('user');
         navigate('/login');
       }
     });
   };
 
+  // ... (aquí sigue tu código del return sin cambios)
   return (
     <header style={{ 
       display: 'flex', 

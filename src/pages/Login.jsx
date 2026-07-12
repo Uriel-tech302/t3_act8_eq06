@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const Login = ({ onLoginSuccess }) => {
+const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  const navigate = useNavigate(); // <-- Herramienta para cambiar de pantalla
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,7 +33,10 @@ const Login = ({ onLoginSuccess }) => {
       const data = await response.json();
 
       if (response.ok) {
-        onLoginSuccess(data); // Si todo sale bien, entramos al sistema
+        // Guardar los datos del usuario en la memoria del navegador
+        localStorage.setItem('user', JSON.stringify(data)); 
+        // Si todo sale bien, lo mandamos a tu Dashboard
+        navigate('/dashboard');
       } else {
         setError(data.message || 'Usuario o contraseña incorrectos.');
       }

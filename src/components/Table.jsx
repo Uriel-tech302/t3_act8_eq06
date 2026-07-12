@@ -58,29 +58,80 @@ export const Table = () => {
 
   // --- ACCIONES CRUD CON SWEETALERT2 ---
 
+  
+// --- NUEVO HANDLE ADD ---
   const handleAdd = async () => {
-    const { value: title } = await Swal.fire({
+    const { value: formValues } = await Swal.fire({
       title: 'Agregar Nuevo Producto',
-      input: 'text',
-      inputLabel: 'Nombre del producto',
-      inputPlaceholder: 'Ej. Teclado Mecánico',
+      html: `
+        <input id="swal-input1" class="swal2-input" placeholder="Nombre (Ej. Teclado)">
+        <input id="swal-input2" class="swal2-input" type="number" step="0.01" placeholder="Precio (Ej. 29.99)">
+        <input id="swal-input3" class="swal2-input" placeholder="Categoría (Ej. electronics)">
+      `,
+      focusConfirm: false,
       showCancelButton: true,
       confirmButtonText: 'Guardar',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#2ecc71',
+      preConfirm: () => {
+        const title = document.getElementById('swal-input1').value;
+        const price = document.getElementById('swal-input2').value;
+        const category = document.getElementById('swal-input3').value;
+        
+        if (!title || !price || !category) {
+          Swal.showValidationMessage('Todos los campos son obligatorios');
+          return null;
+        }
+        return { title, price: parseFloat(price), category };
+      }
     });
 
-    if (!title) return;
+    if (!formValues) return;
     
     try {
-      const newProduct = await addProduct({ title, price: 19.99 });
-      setProducts([newProduct, ...products]);
+      // Petición real a la API
+      const newProduct = await addProduct(formValues);
+      
+      // Asegurarnos de que el nuevo producto tenga los datos que ingresamos 
+      // (a veces DummyJSON no devuelve todo lo que mandamos en un POST falso)
+      const completeProduct = { ...newProduct, ...formValues };
+      
+      setProducts([completeProduct, ...products]);
       Toast.fire({ icon: 'success', title: 'Registro creado exitosamente' });
     } catch (err) {
       Toast.fire({ icon: 'error', title: err.message });
     }
   };
 
+  // --- NUEVO HANDLE DELETE ---
+  const handleDelete = async (id, title) => {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: `Eliminarás el registro: "${title}"`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#e74c3c',
+      cancelButtonColor: '#95a5a6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      // Si el ID es mayor a 194 (límite actual de DummyJSON), es un producto "falso" 
+      // creado localmente, así que no llamamos a la API porque dará error 404.
+      if (id <= 194) {
+        await deleteProduct(id);
+      }
+      
+      // Lo borramos del estado visual sí o sí
+      setProducts(products.filter(p => p.id !== id));
+      Toast.fire({ icon: 'success', title: 'Registro eliminado' });
+    } catch (err) {
+      Toast.fire({ icon: 'error', title: err.message });
+    }
+  };
   const handleEdit = async (product) => {
     const { value: newTitle } = await Swal.fire({
       title: 'Editar Producto',
@@ -103,28 +154,7 @@ export const Table = () => {
     }
   };
 
-  const handleDelete = async (id, title) => {
-    const result = await Swal.fire({
-      title: '¿Estás seguro?',
-      text: `Eliminarás el registro: "${title}"`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#e74c3c',
-      cancelButtonColor: '#95a5a6',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    });
-
-    if (!result.isConfirmed) return;
-
-    try {
-      await deleteProduct(id);
-      setProducts(products.filter(p => p.id !== id));
-      Toast.fire({ icon: 'success', title: 'Registro eliminado' });
-    } catch (err) {
-      Toast.fire({ icon: 'error', title: err.message });
-    }
-  };
+  
 
   // --- ESTILOS EN LÍNEA MEJORADOS ---
   const styles = {
