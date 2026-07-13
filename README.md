@@ -1,16 +1,28 @@
-# React + Vite
+# Actividad 8: Consumo de API - Equipo 06
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ Integrantes del Equipo
+Gonzalez Cruz Litzi Teresa
+Espinoza De La Rosa Uriel
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Proyecto Desplegado (VPS)
+Puedes acceder a la versión en vivo del proyecto a través del siguiente enlace:
 
-## React Compiler
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+API Utilizada para la Tabla de Datos
+Para la gestión del sistema y la tabla de datos principal (Filtros, Paginación y CRUD) elegimos consumir la API de:
+" DummyJSON API " (Módulo de productos / usuarios / o el módulo específico que hayan renderizado en su tabla).
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Características y Criterios Cumplidos
+
+Módulo de Login: Autenticación funcional conectada a `https://dummyjson.com/auth/login` con manejo de credenciales correctas e incorrectas.
+Componentes Globales: Sidebar y Navbar dinámicos que muestran la información del usuario autenticado y manejan la protección de rutas.
+Tabla Completa: Filtros de búsqueda en tiempo real, paginación con selector de cantidad integrada en la URL del navegador.
+Acciones CRUD: Operaciones reales (crear, leer, actualizar, eliminar) comunicadas directamente con la API externa.
+
+
+Credenciales de Prueba (DummyJSON)
+Para evaluar la validación del Login de forma local o en el despliegue:
+Usuario:`emilys`
+Contraseña: `emilyspass`
