@@ -1,12 +1,53 @@
-return (
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import fondoGimnasio from '../assets/fondo-azul.jpg'; 
+import logoGym from '../assets/logo-pesas.png'; 
+
+const Login = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('https://dummyjson.com/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('user', JSON.stringify(data));
+        navigate('/dashboard');
+      } else {
+        setError('Usuario o contraseña incorrectos');
+      }
+    } catch (err) {
+      setError('Error de conexión con el servidor');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
     <div style={styles.container}>
       <form onSubmit={handleSubmit} style={styles.form}>
         
-        {/* Logo de Fitness Center */}
+        {/* El logo ahora está flotando fuera del formulario */}
         <div style={styles.logoContainer}>
-          <div style={styles.logoIcon}>🏋️‍♂️</div>
-          <h1 style={styles.logoTitle}>FITNESS CENTER</h1>
-          <p style={styles.logoSubtitle}>ALPHA FITNESS GYM</p>
+          <img src={logoGym} alt="Logo Pesas" style={styles.logoImage} />
         </div>
 
         <h2 style={styles.title}>Iniciar sesión</h2>
@@ -21,7 +62,6 @@ return (
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Ej: emilys"
               style={styles.input}
             />
           </div>
@@ -37,22 +77,21 @@ return (
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Ej: emilyspass"
               style={styles.input}
             />
           </div>
         </div>
 
-        {/* Mensaje de Error */}
         {error && <p style={styles.errorText}>{error}</p>}
 
-        {/* Botón Entrar */}
         <button type="submit" disabled={loading} style={styles.button}>
           {loading ? 'Cargando...' : 'Entrar'}
         </button>
       </form>
     </div>
   );
+};
+
 const styles = {
   container: {
     display: 'flex',
@@ -60,95 +99,91 @@ const styles = {
     alignItems: 'center',
     height: '100vh',
     width: '100vw',
-    backgroundColor: '#050b24', 
+    backgroundColor: '#020617', 
     backgroundImage: `url(${fondoGimnasio})`, 
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
     margin: 0,
     boxSizing: 'border-box',
+    overflow: 'hidden', 
   },
   form: {
-    padding: '2.5rem 2rem',
-    backgroundColor: 'rgba(10, 15, 30, 0.75)', 
+    position: 'relative', // ¡Clave! Permite que los elementos absolutos se guíen por este cuadro
+    padding: '6rem 2.5rem 2.5rem', // Mucho más espacio arriba (6rem) para que el logo no tape las letras
+    marginTop: '60px', // Empujamos el cuadro un poco abajo para que el logo gigante no choque con el techo
+    backgroundColor: '#0f172a', 
     borderRadius: '16px',
     width: '360px',
-    backdropFilter: 'blur(8px)', 
-    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.6)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
+    border: '2px solid #38bdf8', 
     textAlign: 'center',
   },
   logoContainer: {
-    marginBottom: '1.5rem',
+    position: 'absolute', // Saca al logo del orden normal
+    top: '-90px', // ¡Lo empuja hacia arriba para que sobresalga del borde azul!
+    left: '50%',
+    transform: 'translateX(-50%)', // Lo mantiene perfectamente centrado
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
   },
-  logoIcon: {
-    fontSize: '2.5rem',
-    color: '#38bdf8', 
-    marginBottom: '0.2rem',
-  },
-  logoTitle: {
-    color: '#ffffff',
-    fontSize: '1.4rem',
-    fontWeight: 'bold',
-    letterSpacing: '2px',
-    margin: 0,
-  },
-  logoSubtitle: {
-    color: '#38bdf8',
-    fontSize: '0.75rem',
-    letterSpacing: '1px',
-    margin: '2px 0 0 0',
+  logoImage: {
+    width: '260px', // ¡Ahora sí, gigante! Puedes subirlo a 300px o bajarlo si prefieres
+    height: 'auto',
+    filter: 'drop-shadow(0px 10px 10px rgba(0,0,0,0.5))', // Sombra al logo para que resalte más
   },
   title: {
     textAlign: 'center',
-    marginBottom: '2rem',
-    color: '#ffffff',
-    fontSize: '1.2rem',
-    fontWeight: 'normal',
+    marginBottom: '1.5rem',
+    color: '#f8fafc',
+    fontSize: '1.1rem',
+    fontWeight: '500',
   },
   inputGroup: {
-    marginBottom: '1.5rem',
+    marginBottom: '1.2rem',
     textAlign: 'left',
   },
   label: {
     display: 'block',
-    marginBottom: '0.5rem',
-    color: '#a1a1aa', 
-    fontSize: '0.9rem',
+    marginBottom: '0.4rem',
+    color: '#f1f5f9',
+    fontSize: '0.85rem',
+    fontWeight: '500',
   },
   inputWrapper: {
     display: 'flex',
     alignItems: 'center',
-    borderBottom: '1px solid #4b5563', 
-    paddingBottom: '5px',
+    border: '1px solid #334155', 
+    backgroundColor: '#1e293b', 
+    padding: '10px 12px',
+    borderRadius: '6px',
   },
   icon: {
-    marginRight: '10px',
-    color: '#6b7280',
+    marginRight: '12px',
+    color: '#94a3b8',
     fontSize: '1.1rem',
   },
   input: {
     width: '100%',
-    padding: '0.4rem 0',
-    backgroundColor: 'transparent', 
+    backgroundColor: 'transparent',
     border: 'none',
     outline: 'none',
-    color: '#ffffff', 
+    color: '#ffffff',
     fontSize: '1rem',
   },
   button: {
     width: '100%',
-    padding: '0.75rem',
-    backgroundColor: 'transparent',
-    color: '#ffffff',
-    border: '1px solid #4b5563', 
+    padding: '12px',
+    backgroundColor: '#1e293b', 
+    color: '#f1f5f9',
+    border: '1px solid #334155',
     borderRadius: '6px',
     cursor: 'pointer',
     fontSize: '1rem',
-    transition: 'all 0.3s ease',
-    marginTop: '1rem',
-    letterSpacing: '1px',
+    fontWeight: '500',
+    transition: 'all 0.2s',
+    marginTop: '0.5rem',
   },
   errorText: {
     color: '#ef4444',
