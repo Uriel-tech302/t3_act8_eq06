@@ -31,7 +31,7 @@ Contraseña: emilyspass
 
 Link de VPS:
 
-http://143.244.154.171
+http://143.244.154.171/t3_act8_eq06/login
 
 Link de GitHub:
 
