@@ -5,7 +5,7 @@ import { ProtectedRoute } from './components/ProtectedRoute'; // <-- Importamos 
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/t3_act8_eq06">
       <Routes>
         {/* Redirigir la ruta raíz al login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
