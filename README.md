@@ -25,4 +25,8 @@ Acciones CRUD: Operaciones reales (crear, leer, actualizar, eliminar) comunicada
 Credenciales de Prueba (DummyJSON)
 Para evaluar la validación del Login de forma local o en el despliegue:
 Usuario:`emilys`
-Contraseña: `emilyspass`
+Contraseña: `emilyspass
+link de VPS 
+http://143.244.154.171
+Link de GitHub
+https://github.com/Uriel-tech302/t3_act8_eq06
