@@ -54,7 +54,7 @@ const Login = () => {
 
         {/* Input Usuario */}
         <div style={styles.inputGroup}>
-          <label htmlFor="username" style={styles.label}>Usuario</label>
+          <label htmlFor="username" style={styles.label}>Persona</label>
           <div style={styles.inputWrapper}>
             <span style={styles.icon}>👤</span>
             <input

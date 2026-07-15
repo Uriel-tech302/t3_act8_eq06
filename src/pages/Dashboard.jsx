@@ -1,22 +1,81 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { Navbar } from '../components/Navbar';
-import { Table } from '../components/Table'; // Verifica que esta ruta sea la tuya
+import { Table } from '../components/Table'; 
 
 export const Dashboard = () => {
+  // 1. Estados para controlar el menú en celulares
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // 2. Efecto para detectar si la pantalla se hace pequeña o grande
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <div style={{ 
       display: 'flex', 
-      height: '100vh', // Ocupa el 100% del alto de la pantalla
-      width: '100vw',  // Ocupa el 100% del ancho
-      backgroundColor: '#f5f5f5', // El gris clarito de tu Figma
-      overflow: 'hidden', // Evita que la página entera haga scroll
+      height: '100vh', 
+      width: '100vw', 
+      backgroundColor: '#f5f5f5', 
+      overflow: 'hidden', 
       margin: 0,
-      padding: 0
+      padding: 0,
+      position: 'relative' // Necesario para que el menú flote encima en celulares
     }}>
       
-      {/* Columna Izquierda: Menú fijo */}
-      <div style={{ flexShrink: 0 }}>
+      {/* Botón de Hamburguesa (Solo visible en móviles) */}
+      {isMobile && (
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          style={{
+            position: 'absolute', 
+            top: '15px', 
+            left: '15px', 
+            zIndex: 1000,
+            backgroundColor: '#3b82f6', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '6px', 
+            padding: '8px 12px', 
+            cursor: 'pointer',
+            fontSize: '1.2rem',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.2)'
+          }}
+        >
+          ☰
+        </button>
+      )}
+
+      {/* Fondo oscuro semitransparente al abrir el menú en celular */}
+      {isMobile && isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)} // Cierra el menú al tocar el fondo oscuro
+          style={{
+            position: 'absolute', 
+            top: 0, 
+            left: 0, 
+            width: '100vw', 
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.5)', 
+            zIndex: 998 // Un nivel abajo del menú
+          }}
+        />
+      )}
+
+      {/* Columna Izquierda: Menú (Fijo en PC, Flotante en Celular) */}
+      <div style={{ 
+        flexShrink: 0,
+        position: isMobile ? 'absolute' : 'relative',
+        zIndex: 999,
+        // Magia aquí: Si es móvil y está cerrado, lo escondemos moviéndolo a la izquierda
+        transform: isMobile ? (isSidebarOpen ? 'translateX(0)' : 'translateX(-100%)') : 'translateX(0)',
+        transition: 'transform 0.3s ease-in-out',
+        height: '100vh'
+      }}>
         <Sidebar />
       </div>
       
@@ -31,30 +90,28 @@ export const Dashboard = () => {
         {/* Barra Superior Fija */}
         <Navbar />
         
-        {/* Área de la Tabla (Esta es la única parte que hará scroll) */}
+        {/* Área de la Tabla */}
         <main style={{ 
           flex: 1, 
-          padding: '40px', 
-          overflowY: 'auto' // Si hay muchos productos, el scroll solo sale aquí
+          // Si es celular, reducimos el padding para que la tabla quepa mejor
+          padding: isMobile ? '15px' : '40px', 
+          overflowY: 'auto' 
         }}>
           
-          {/* Contenedor blanco estilo tarjeta para la tabla */}
           <div style={{ 
             backgroundColor: 'white', 
-            padding: '30px', 
-            borderRadius: '12px', // Bordes más redondeados y bonitos
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.03)', // Sombra muy suave
-            minHeight: '100%' 
+            padding: isMobile ? '15px' : '30px', 
+            borderRadius: '12px', 
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.03)', 
+            minHeight: '100%',
+            overflowX: 'auto' // Permite hacer scroll horizontal si la tabla es muy ancha en celular
           }}>
             
-            {/* Aquí va tu componente de tabla real */}
             <Table />
             
           </div>
-          
         </main>
       </div>
-      
     </div>
   );
 };
